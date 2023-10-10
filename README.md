@@ -21,7 +21,7 @@ This is a personal project built in my spare time for learning purposes.
 - Clone the repository:
 
 ```bash
-git clone https://github.com/khushbu5794/react-weather-forecasting.git
+git clone [https://github.com/khushbu5794/react-weather-forecasting.git]
 ```
 - Install the packages using the command `npm install`
 
@@ -38,3 +38,4 @@ Check `packages.json` for details
 
 - Linkedin:   [@Khushbu Patel](https://www.linkedin.com/in/khushideveloper)
 - Instagram:  [@JyotDev](https://instagram.com/jyot_dev)
+  
