@@ -5,30 +5,22 @@ import { fetchCities } from '../../api/OpenWeatherService';
 const Search = ({ onSearchChange }) => {
   const [searchValue, setSearchValue] = useState(null);
 
-  const loadOptions = async (inputValue) => {
-    const citiesList = await fetchCities(inputValue);
-
-    return {
-      options: citiesList.data.map((city) => {
-        return {
-          value: `${city.latitude} ${city.longitude}`,
-          label: `${city.name}, ${city.countryCode}`,
-        };
-      }),
-    };
-  };
-
-  const onChangeHandler = (enteredData) => {
-    setSearchValue(enteredData);
-    onSearchChange(enteredData);
-  };
+  const loadOptions = async (inputValue) => ({
+    options: (await fetchCities(inputValue)).data.map((city) => ({
+      value: `${city.latitude} ${city.longitude}`,
+      label: `${city.name}, ${city.countryCode}`,
+    })),
+  });
 
   return (
     <AsyncPaginate
       placeholder="Search for cities"
       debounceTimeout={600}
       value={searchValue}
-      onChange={onChangeHandler}
+      onChange={(enteredData) => {
+        setSearchValue(enteredData);
+        onSearchChange(enteredData);
+      }}
       loadOptions={loadOptions}
     />
   );

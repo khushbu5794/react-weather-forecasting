@@ -1,8 +1,6 @@
 const GEO_API_URL = 'https://wft-geo-db.p.rapidapi.com/v1/geo';
-
 const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5';
 const WEATHER_API_KEY = '8f67556bbd4da9e75252e2c0763dac79';
-
 const GEO_API_OPTIONS = {
   method: 'GET',
   headers: {
@@ -10,37 +8,47 @@ const GEO_API_OPTIONS = {
     'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com',
   },
 };
+const fetchWithRetry = async (url, options) => {
+  let retries = 3;
+  while (retries > 0) {
+    try {
+      const response = await fetch(url, options);
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    retries--;
+  }
+  throw new Error('Failed to fetch data');
+};
 
-export async function fetchWeatherData(lat, lon) {
+export const fetchWeatherData = async (lat, lon) => {
+  const weatherUrl = `${WEATHER_API_URL}/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`;
+  const forecastUrl = `${WEATHER_API_URL}/forecast?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`;
+
   try {
-    let [weatherPromise, forcastPromise] = await Promise.all([
-      fetch(
-        `${WEATHER_API_URL}/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`
-      ),
-      fetch(
-        `${WEATHER_API_URL}/forecast?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`
-      ),
+    const [weatherResponse, forecastResponse] = await Promise.all([
+      fetchWithRetry(weatherUrl),
+      fetchWithRetry(forecastUrl),
     ]);
 
-    const weatherResponse = await weatherPromise.json();
-    const forcastResponse = await forcastPromise.json();
-    return [weatherResponse, forcastResponse];
+    return [weatherResponse, forecastResponse];
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    throw error;
   }
-}
+};
 
-export async function fetchCities(input) {
+export const fetchCities = async (input) => {
+  const namePrefix = input.trim() || 'surat';
+  const citiesUrl = `${GEO_API_URL}/cities?minPopulation=10000&namePrefix=${namePrefix}`;
   try {
-    const response = await fetch(
-      `${GEO_API_URL}/cities?minPopulation=10000&namePrefix=${input}`,
-      GEO_API_OPTIONS
-    );
-
-    const data = await response.json();
+    const data = await fetchWithRetry(citiesUrl, GEO_API_OPTIONS);
     return data;
   } catch (error) {
-    console.log(error);
-    return;
+    console.error(error);
+    throw error;
   }
-}
+};

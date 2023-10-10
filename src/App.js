@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Container, Grid, SvgIcon, Typography } from '@mui/material';
 import Search from './components/Search/Search';
 import WeeklyForecast from './components/WeeklyForecast/WeeklyForecast';
@@ -23,15 +23,37 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  useEffect(() => {
+    fetch('https://ipinfo.io/103.240.79.231?token=fd61e73f41fee8')
+      .then((response) => response.json())
+      .then((data) => {
+        const { city, country, loc } = data;
+        let cityLabel = `${city}, ${country}`
+        searchChangeHandler({ label: cityLabel, value: loc.replace(',', ' ') })
+      })
+      .catch((error) => {
+        console.error('Error fetching IP location:', error);
+      });
+      // this code when use not use ipingo api call
+    // if ('geolocation' in navigator) {
+    //   navigator.geolocation.getCurrentPosition((position) => {
+    //     const { latitude, longitude } = position.coords;
+    //     searchChangeHandler({ value: `${latitude} ${longitude}` })
+    //   },
+    //     (error) => {
+    //       console.error('Error getting user location:', error);
+    //     });
+    // } else {
+    //   console.error('Geolocation is not available in this browser.');
+    // }
+  }, []);
+
   const searchChangeHandler = async (enteredData) => {
     const [latitude, longitude] = enteredData.value.split(' ');
-
     setIsLoading(true);
-
     const currentDate = transformDateFormat();
     const date = new Date();
     let dt_now = Math.floor(date.getTime() / 1000);
-
     try {
       const [todayWeatherResponse, weekForecastResponse] =
         await fetchWeatherData(latitude, longitude);
@@ -49,13 +71,12 @@ function App() {
       setTodayForecast([...all_today_forecasts_list]);
       setTodayWeather({ city: enteredData.label, ...todayWeatherResponse });
       setWeekForecast({
-        city: enteredData.label,
+        city: enteredData.label.ca,
         list: all_week_forecasts_list,
       });
     } catch (error) {
       setError(true);
     }
-
     setIsLoading(false);
   };
 
@@ -157,7 +178,8 @@ function App() {
         height: '100%',
       }}
     >
-    <Box sx={{ margin: '20px auto',
+      <Box sx={{
+        margin: '20px auto',
         padding: '1rem',
         borderRadius: {
           xs: 'none',
@@ -169,33 +191,32 @@ function App() {
         },
         background: 'linear-gradient(-35deg, #737373 0%, #000000)'
       }}>
-      <Grid container columnSpacing={2}>
-        <Grid item xs={12}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{
-              width: '100%',
-              marginBottom: '1rem',
-            }}
-          >
+        <Grid container columnSpacing={2}>
+          <Grid item xs={12}>
             <Box
-              component="img"
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
               sx={{
-                height: { xs: '30px', sm: '35px', md: '40px' },
-                width: 'auto',
+                width: '100%',
+                marginBottom: '1rem',
               }}
-              alt="logo"
-              src={Logo}
-            />
-
-            <UTCDatetime />
-          </Box>
-          <Search onSearchChange={searchChangeHandler} />
+            >
+              <Box
+                component="img"
+                sx={{
+                  height: { xs: '30px', sm: '35px', md: '40px' },
+                  width: 'auto',
+                }}
+                alt="logo"
+                src={Logo}
+              />
+              <UTCDatetime />
+            </Box>
+            <Search onSearchChange={searchChangeHandler}/>
+          </Grid>
+         {appContent}
         </Grid>
-        {appContent}
-      </Grid>
       </Box>
     </Container>
   );

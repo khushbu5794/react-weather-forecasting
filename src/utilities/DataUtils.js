@@ -38,73 +38,45 @@ export function groupBy(key) {
   };
   
   export const getWeekForecastWeather = (response, descriptions_list) => {
-    let foreacast_data = [];
-    let descriptions_data = [];
-  
-    if (!response || Object.keys(response).length === 0 || response.cod === '404')
+      if (!response || Object.keys(response).length === 0 || response.cod === '404') {
       return [];
-    else
-      response?.list.slice().map((item, idx) => {
-        descriptions_data.push({
-          description: item.weather[0].description,
-          date: item.dt_txt.substring(0, 10),
-        });
-        foreacast_data.push({
-          date: item.dt_txt.substring(0, 10),
-          temp: item.main.temp,
-          humidity: item.main.humidity,
-          wind: item.wind.speed,
-          clouds: item.clouds.all,
-        });
+    } else {
+      const groupedData = {};
   
-        return { idx, item };
+      response?.list.forEach((item) => {
+        const date = item.dt_txt.substring(0, 10);
+  
+        if (!groupedData[date]) {
+          groupedData[date] = {
+            tempSum: 0,
+            humiditySum: 0,
+            windSum: 0,
+            cloudsSum: 0,
+            descriptions: [],
+          };
+        }
+  
+        groupedData[date].tempSum += item.main.temp;
+        groupedData[date].humiditySum += item.main.humidity;
+        groupedData[date].windSum += item.wind.speed;
+        groupedData[date].cloudsSum += item.clouds.all;
+        groupedData[date].descriptions.push(item.weather[0].description);
       });
   
-    const groupByDate = groupBy('date');
-    let grouped_forecast_data = groupByDate(foreacast_data);
-    let grouped_forecast_descriptions = groupByDate(descriptions_data);
+      const dayAvgsList = Object.entries(groupedData).map(([date, data]) => ({
+        date,
+        temp: Math.round(data.tempSum / data.descriptions.length),
+        humidity: Math.round(data.humiditySum / data.descriptions.length),
+        wind: (data.windSum / data.descriptions.length).toFixed(2),
+        clouds: (data.cloudsSum / data.descriptions.length).toFixed(2),
+        description: getMostFrequentWeather(data.descriptions),
+        icon: descriptionToIconName(getMostFrequentWeather(data.descriptions), descriptions_list),
+      }));
   
-    const description_keys = Object.keys(grouped_forecast_descriptions);
-  
-    let dayDescList = [];
-  
-    description_keys.forEach((key) => {
-      let singleDayDescriptions = grouped_forecast_descriptions[key].map(
-        (item) => item.description
-      );
-      let mostFrequentDescription = getMostFrequentWeather(singleDayDescriptions);
-      dayDescList.push(mostFrequentDescription);
-    });
-  
-    const forecast_keys = Object.keys(grouped_forecast_data);
-    let dayAvgsList = [];
-  
-    forecast_keys.forEach((key, idx) => {
-      let dayTempsList = [];
-      let dayHumidityList = [];
-      let dayWindList = [];
-      let dayCloudsList = [];
-  
-      for (let i = 0; i < grouped_forecast_data[key].length; i++) {
-        dayTempsList.push(grouped_forecast_data[key][i].temp);
-        dayHumidityList.push(grouped_forecast_data[key][i].humidity);
-        dayWindList.push(grouped_forecast_data[key][i].wind);
-        dayCloudsList.push(grouped_forecast_data[key][i].clouds);
-      }
-  
-      dayAvgsList.push({
-        date: key,
-        temp: getAverage(dayTempsList),
-        humidity: getAverage(dayHumidityList),
-        wind: getAverage(dayWindList, false),
-        clouds: getAverage(dayCloudsList),
-        description: dayDescList[idx],
-        icon: descriptionToIconName(dayDescList[idx], descriptions_list),
-      });
-    });
-  
-    return dayAvgsList;
+      return dayAvgsList;
+    }
   };
+  
   
   export const getTodayForecastWeather = (
     response,

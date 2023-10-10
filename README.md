@@ -1,7 +1,7 @@
 # ⛅️ Weather Forecasting App made with React
 
 The Weather Forecasting allows users to look for locations by city name and view the weather for the subsequent 5–6 days and every three hours.
-<br />
+
 React.js and Material-UI are used to create the app.
 
 ## About
@@ -9,10 +9,6 @@ React.js and Material-UI are used to create the app.
 This is a personal project built in my spare time for learning purposes.
 
 ![Application screenshot](./public/screenshot.png)
-
-<br/>
-<br/>
-
 ## ✨ Getting Started
 
 - Verify that `Node.js` and `npm` are already installed on your system.
@@ -25,13 +21,9 @@ This is a personal project built in my spare time for learning purposes.
 - Clone the repository:
 
 ```bash
-git clone https://github.com/Amin-Awinti/the-weather-forecasting.git
-
+git clone https://github.com/khushbu5794/react-weather-forecasting.git
 ```
-
 - Install the packages using the command `npm install`
-
-<br/>
 
 ## 📙 Used libraries
 

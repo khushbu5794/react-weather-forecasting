@@ -31,8 +31,7 @@ const WeeklyForecast = ({ data }) => {
         display="flex"
         flexDirection="column"
         xs={12}
-        gap="4px"
-      >
+        gap="4px">
         {data.list.map((item, idx) => {
           return (
             <Grid
@@ -48,14 +47,12 @@ const WeeklyForecast = ({ data }) => {
                 boxShadow:
                   'rgba(0, 0, 0, 0.05) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
                 borderRadius: '8px',
-              }}
-            >
+              }} >
               <DayWeatherDetails
                 day={forecastDays[idx]}
                 src={weatherIcon(`${item.icon}`)}
                 description={item.description}
               />
-
               <Grid
                 container
                 sx={{
@@ -63,8 +60,7 @@ const WeeklyForecast = ({ data }) => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                }}
-              >
+                }}>
                 <WeeklyForecastItem
                   type="temperature"
                   value={Math.round(item.temp) + ' °C'}
@@ -76,7 +72,6 @@ const WeeklyForecast = ({ data }) => {
                   color="black"
                 />
               </Grid>
-
               <Grid
                 container
                 sx={{
@@ -84,8 +79,7 @@ const WeeklyForecast = ({ data }) => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                }}
-              >
+                }}>
                 <WeeklyForecastItem
                   type="wind"
                   value={item.wind + ' m/s'}

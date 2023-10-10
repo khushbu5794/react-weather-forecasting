@@ -5,35 +5,16 @@ import FilterDramaIcon from '@mui/icons-material/FilterDrama';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
 import { ReactComponent as HumidityIcon } from '../../assets/humidity.svg';
 
-const WeeklyForecastItem = ({ value, type }) => {
-  let iconContent;
+const typeToIcon = {
+  temperature: <ThermostatIcon sx={{ fontSize: { xs: '15px', sm: '16px', md: '18px' } }} />,
+  wind: <AirIcon sx={{ fontSize: { xs: '15px', sm: '16px', md: '18px' } }} />,
+  clouds: <FilterDramaIcon sx={{ fontSize: { xs: '15px', sm: '16px', md: '18px' } }} />,
+  humidity: <SvgIcon component={HumidityIcon} inheritViewBox sx={{ fontSize: { xs: '15px', sm: '16px', md: '18px' } }} />,
+};
 
-  if (type === 'temperature')
-    iconContent = (
-      <ThermostatIcon
-        sx={{ fontSize: { xs: '15px', sm: '16px', md: '18px' } }}
-      />
-    );
-  else if (type === 'wind')
-    iconContent = (
-      <AirIcon sx={{ fontSize: { xs: '15px', sm: '16px', md: '18px' } }} />
-    );
-  else if (type === 'clouds')
-    iconContent = (
-      <FilterDramaIcon
-        sx={{ fontSize: { xs: '15px', sm: '16px', md: '18px' } }}
-      />
-    );
-  else if (type === 'humidity')
-    iconContent = (
-      <SvgIcon
-        component={HumidityIcon}
-        inheritViewBox
-        sx={{
-          fontSize: { xs: '15px', sm: '16px', md: '18px' },
-        }}
-      />
-    );
+const WeeklyForecastItem = ({ value, type }) => {
+  const iconContent = typeToIcon[type] || null;
+
   return (
     <Box
       sx={{

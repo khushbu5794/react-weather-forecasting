@@ -1,27 +1,19 @@
-import { Box, Grid, SvgIcon } from '@mui/material';
+import { Box, Grid,SvgIcon } from '@mui/material';
 import React from 'react';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
 import AirIcon from '@mui/icons-material/Air';
 import FilterDramaIcon from '@mui/icons-material/FilterDrama';
 import { ReactComponent as HumidityIcon } from '../../../assets/humidity.svg';
 
-const AirConditionsItem = (props) => {
-  let iconContent;
+const iconMap = {
+  temperature: <ThermostatIcon sx={{ fontSize: '18px' }} />,
+  wind: <AirIcon sx={{ fontSize: '18px' }} />,
+  clouds: <FilterDramaIcon sx={{ fontSize: '18px' }} />,
+  humidity: <SvgIcon component={HumidityIcon} inheritViewBox sx={{ fontSize: '18px' }} />,
+};
 
-  if (props.type === 'temperature')
-    iconContent = <ThermostatIcon sx={{ fontSize: '18px' }} />;
-  else if (props.type === 'wind')
-    iconContent = <AirIcon sx={{ fontSize: '18px' }} />;
-  else if (props.type === 'clouds')
-    iconContent = <FilterDramaIcon sx={{ fontSize: '18px' }} />;
-  else if (props.type === 'humidity')
-    iconContent = (
-      <SvgIcon
-        component={HumidityIcon}
-        inheritViewBox
-        sx={{ fontSize: '18px' }}
-      />
-    );
+const AirConditionsItem = ({ type, title, value }) => {
+  const iconContent = iconMap[type];
 
   return (
     <Grid
@@ -64,7 +56,7 @@ const AirConditionsItem = (props) => {
             alignItems: 'center',
           }}
         >
-          {props.title}
+          {title}
         </Box>
       </Grid>
       <Grid
@@ -84,7 +76,7 @@ const AirConditionsItem = (props) => {
             lineHeight: 1,
           }}
         >
-          {props.value}
+          {value}
         </Box>
       </Grid>
     </Grid>
