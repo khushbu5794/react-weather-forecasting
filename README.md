@@ -37,5 +37,4 @@ Check `packages.json` for details
 👤 **Khushbu Patel**
 
 - Linkedin:   [@Khushbu Patel](https://www.linkedin.com/in/khushideveloper)
-- Instagram:  [@JyotDev](https://instagram.com/jyot_dev)
   
